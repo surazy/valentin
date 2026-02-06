@@ -1,5 +1,5 @@
 {
-  "name": "valentine-ai---will-you-be-mine?",
+  "name": "valentine's-surprise",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,10 +11,10 @@
   "dependencies": {
     "react-router-dom": "^7.13.0",
     "react": "^19.2.4",
-    "@google/genai": "^1.40.0",
     "react-dom": "^19.2.4",
     "lucide-react": "^0.563.0",
-    "canvas-confetti": "^1.9.4"
+    "canvas-confetti": "^1.9.4",
+    "@google/genai": "^1.40.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

@@ -1,9 +1,8 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { HashRouter as Router } from 'react-router-dom';
 import { Heart, Sparkles, Music, Star, Flower, Pause, Play, Volume2 } from 'lucide-react';
 import { AppStage, UserContext } from './types';
-import { generateRomanticLetter } from './services/geminiService';
 import FloatingHearts from './components/FloatingHearts';
 import confetti from 'canvas-confetti';
 
@@ -30,6 +29,8 @@ const PRAISE_LINES = [
   "You're my favorite person!",
 ];
 
+const STATIC_LOVE_NOTE = `You’ve made me the happiest person in the world! Every moment with you feels like a beautiful dream, and I’m so lucky to have you in my life. You are my today, my tomorrow, and my forever Valentine. ❤️`;
+
 const App: React.FC = () => {
   const [stage, setStage] = useState<AppStage>('QUESTION');
   const [context, setContext] = useState<UserContext>({
@@ -39,9 +40,7 @@ const App: React.FC = () => {
   const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
   const [noPhraseIndex, setNoPhraseIndex] = useState(0);
   const [yesButtonScale, setYesButtonScale] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [currentPraise, setCurrentPraise] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -119,18 +118,13 @@ const App: React.FC = () => {
     }, 250);
   };
 
-  const handleYes = async () => {
+  const handleYes = () => {
     playSparkle();
-    setLoading(true);
     
-    // Play the song "Perfect"
     if (audioRef.current) {
       audioRef.current.play().catch(err => console.log("Autoplay prevented:", err));
       setIsPlaying(true);
     }
-
-    // Start generating early
-    const letterPromise = generateRomanticLetter();
     
     setStage('PRE_CELEBRATION');
     triggerFireworks();
@@ -141,18 +135,11 @@ const App: React.FC = () => {
       setCurrentPraise(prev => (prev + 1) % PRAISE_LINES.length);
     }, 1200);
 
-    // After celebration, show the letter
-    setTimeout(async () => {
+    // Transition to the final letter after 6 seconds
+    setTimeout(() => {
       clearInterval(praiseInterval);
-      try {
-        const letter = await letterPromise;
-        setContext(prev => ({ ...prev, isValentine: true, generatedLetter: letter }));
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setStage('CELEBRATION');
-        setLoading(false);
-      }
+      setContext({ isValentine: true });
+      setStage('CELEBRATION');
     }, 6000);
   };
 
@@ -179,14 +166,12 @@ const App: React.FC = () => {
     <div className="min-h-screen relative flex flex-col items-center justify-center p-4 overflow-hidden bg-rose-50">
       <FloatingHearts />
       
-      {/* Hidden Audio Element */}
       <audio 
         ref={audioRef} 
-        src="https://efyewfqnrtbianfdcxnp.supabase.co/storage/v1/object/sign/storafe/perfect.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iZGRiMTNlMS0wZTg1LTRhNTgtYWUzZS0zNTEzZDU0ZmJhNTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzdG9yYWZlL3BlcmZlY3QubXAzIiwiaWF0IjoxNzcwMzkwNjMwLCJleHAiOjE3NzI5ODI2MzB9.h1KEinMC6xfe1Z3W00yiAiAaehEVWIh_vYbVZyfFIQ4" // Placeholder for romantic instrumental
+        src="https://efyewfqnrtbianfdcxnp.supabase.co/storage/v1/object/sign/storafe/perfect.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iZGRiMTNlMS0wZTg1LTRhNTgtYWUzZS0zNTEzZDU0ZmJhNTYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzdG9yYWZlL3BlcmZlY3QubXAzIiwiaWF0IjoxNzcwMzkwNjMwLCJleHAiOjE3NzI5ODI2MzB9.h1KEinMC6xfe1Z3W00yiAiAaehEVWIh_vYbVZyfFIQ4" 
         loop
       />
 
-      {/* Music Player Widget */}
       {(stage === 'PRE_CELEBRATION' || stage === 'CELEBRATION') && (
         <div className="fixed bottom-6 right-6 z-50 animate-fadeIn">
           <div className="bg-white/90 backdrop-blur-md border border-rose-100 rounded-2xl p-3 shadow-xl flex items-center gap-4 group transition-all hover:pr-6">
@@ -207,7 +192,6 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Main Content Card */}
       <main className="w-full max-w-2xl bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8 z-10 border border-rose-100 transition-all duration-500 min-h-[500px] flex flex-col justify-center">
         
         {stage === 'QUESTION' && (
@@ -222,11 +206,10 @@ const App: React.FC = () => {
             <div className="flex flex-col md:flex-row items-center justify-center gap-8 relative mt-12">
               <button
                 onClick={handleYes}
-                disabled={loading}
                 style={{ transform: `scale(${yesButtonScale})` }}
                 className="px-12 py-6 bg-rose-500 hover:bg-rose-600 text-white text-2xl font-bold rounded-2xl shadow-xl shadow-rose-300 transition-all duration-300 z-30 active:scale-95"
               >
-                {loading ? 'Celebration time!' : 'YES! ❤️'}
+                YES! ❤️
               </button>
               
               <button
@@ -298,7 +281,7 @@ const App: React.FC = () => {
                 <Music size={24} className="text-rose-400" />
               </div>
               <p className="text-xl font-cursive leading-relaxed text-rose-800 whitespace-pre-wrap italic">
-                "{context.generatedLetter || "You've made me the happiest person in the world! ❤️"}"
+                "{STATIC_LOVE_NOTE}"
               </p>
             </div>
 
