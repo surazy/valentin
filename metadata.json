@@ -1,0 +1,7 @@
+{
+  "name": "Valentine AI - Will You Be Mine?",
+  "description": "A delightful, interactive AI-powered experience to ask someone to be your valentine, featuring personalized AI love letters, custom AI card generation, and romantic dinner planning.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
