@@ -1,5 +1,3 @@
-Got you. Let’s make it clean, modern, and actually cool 😎
-Here’s a proper **README.md** — no weird tags, just clean Markdown.
 
 ---
 
@@ -163,11 +161,3 @@ Just remember to configure environment variables on the hosting platform.
 This project is for personal and educational use.
 
 ---
-
-If you want, I can now:
-
-* Make it look like a **professional portfolio project**
-* Or make it more romantic and dramatic 😏
-* Or rewrite it like a startup product page
-
-Your move.
